@@ -19,7 +19,8 @@
       <div class="card">
         <div class="card-content">
           <p class="title">
-            {{ selectedQuote }}
+            <span class="has-text-success">{{ matchedText }}</span>
+            <span>{{ remainingText }}</span>
           </p>
         </div>
       </div>
@@ -33,8 +34,6 @@
         </div>
       </div>
     </div>
-
-
   </section>
 </template>
 
@@ -50,7 +49,35 @@ export default {
   },
 
   computed: {
+    inputedQuoteLetters: function () {
+      return this.inputedQuote
+        .split('');
+    },
 
+    selectedQuoteLetters: function () {
+      return this.selectedQuote
+        .split('');
+    },
+
+    matchedText: function () {
+      const result = [];
+
+      // for performance reasons let's iterate through the inputedQuote that's likely to be the smaller
+      for (let i=0; i < this.inputedQuoteLetters.length; i++) {
+        if (this.inputedQuoteLetters[i] !== this.selectedQuoteLetters[i]) {
+          break;
+        }
+        result.push(this.inputedQuoteLetters[i]);
+      }
+
+      return result.join('');
+    },
+
+    remainingText: function () {
+      return this.selectedQuoteLetters
+        .slice(this.matchedText.length)
+        .join('');
+    }
   },
 
   components: {
