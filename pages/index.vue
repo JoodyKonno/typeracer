@@ -19,13 +19,17 @@
       <div class="tile is-child notification is-primary" v-show="isFinished">
         <p class="title">Game Over</p>
         <p class="subtitle">Your score: </p>
+
+        <a class="button is-" @click="isFinished = false">Try Again</a>
       </div>
 
       <div class="card">
         <div class="card-content">
           <p class="title">
+            <span class="big-quotes">"</span>
             <span class="has-text-success">{{ matchedText }}</span>
             <span>{{ remainingText }}</span>
+            <span class="big-quotes">"</span>
           </p>
         </div>
       </div>
