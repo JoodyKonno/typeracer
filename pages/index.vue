@@ -34,12 +34,20 @@
         </div>
       </div>
 
-      <div class="card form-card">
+      <div class="timer" v-show="!gameHasStarted">
+        <span>The game will start in</span>
+        <countdown @countdownFinished="startGame" :seconds="secondsToStart"></countdown>
+        <span>seconds</span>
+      </div>
+
+      <div class="card form-card" >
         <div class="card-content">
           <p class="title">
-            <textarea :disabled="isFinished" v-model='inputedQuote'></textarea>
+            <textarea ref="inputedQuote" :disabled="!gameHasStarted || isFinished" v-model='inputedQuote'></textarea>
           </p>
-          <p class="subtitle">Type the text and see your score</p>
+          <p class="subtitle">
+            Type the text and see your score
+          </p>
         </div>
       </div>
     </div>
@@ -47,7 +55,8 @@
 </template>
 
 <script>
-import Header from '@/components/Header.vue'
+import Header from '@/components/Header';
+import Countdown from '@/components/Countdown';
 
 export default {
   data() {
@@ -55,6 +64,8 @@ export default {
       inputedQuote: '',
       selectedQuote: 'They had taken it all away from him now, they had turned away from him and there was nothing for him now. He was alone and there was nothing for him.',
       isFinished: false,
+      secondsToStart: 10,
+      gameHasStarted: false,
     }
   },
 
@@ -90,6 +101,15 @@ export default {
     },
   },
 
+  methods: {
+    startGame() {
+      this.gameHasStarted = true;
+      this.$nextTick(() => {
+        this.$refs.inputedQuote.focus();
+      });
+    }
+  },
+
   watch: {
     inputedQuote: function (newInput, oldInput) {
       if (this.remainingText === '') {
@@ -100,6 +120,7 @@ export default {
 
   components: {
     'app-header': Header,
+    'countdown': Countdown,
   }
 }
 </script>
@@ -109,6 +130,10 @@ export default {
   width: 100%;
   height: 150px;
   font-size: 18px;
+}
+
+.timer {
+  padding: 0 1.5em;
 }
 </style>
 
