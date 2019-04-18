@@ -18,7 +18,15 @@
     <div class="container">
       <div class="tile is-child notification is-primary" v-show="isFinished">
         <p class="title">Game Over</p>
-        <p class="subtitle">Your score: </p>
+        <p class="subtitle">
+          <span>Your typed</span>
+          <strong>{{ selectedQuoteSize }}</strong>
+          <span>characters in </span>
+          <strong>{{ formattedTimeElapsed }}</strong>
+          <span>seconds. Your typing rate is</span>
+          <strong>{{ formattedCharsPerSecond }}</strong>
+          <span>characters per second</span>
+        </p>
 
         <a class="button is-" @click="isFinished = false">Try Again</a>
       </div>
@@ -47,16 +55,23 @@
           </p>
           <p class="subtitle">
             Type the text and see your score
+            <p>Time Elapsed: {{ formattedTimeElapsed }}</p>
           </p>
         </div>
       </div>
     </div>
+
+    <time-tracker
+      :start="gameHasStarted"
+      :end="isFinished"
+      @onUpdateTracking="updateTimer"></time-tracker>
   </section>
 </template>
 
 <script>
 import Header from '@/components/Header';
 import Countdown from '@/components/Countdown';
+import TimeTracker from '@/components/TimeTracker';
 
 export default {
   data() {
@@ -66,6 +81,7 @@ export default {
       isFinished: false,
       secondsToStart: 10,
       gameHasStarted: false,
+      timeElapsed: 0.0,
     }
   },
 
@@ -99,6 +115,25 @@ export default {
         .slice(this.matchedText.length)
         .join('');
     },
+
+    formattedTimeElapsed: function () {
+      return this.timeElapsed / 1000;
+    },
+
+    selectedQuoteSize() {
+      return this.selectedQuote.length;
+    },
+
+    charsPerSecond: function () {
+      if (this.isFinished) {
+        return this.selectedQuoteSize / this.formattedTimeElapsed;
+      }
+      return 0;
+    },
+
+    formattedCharsPerSecond: function () {
+      return this.charsPerSecond.toFixed(2);
+    },
   },
 
   methods: {
@@ -107,6 +142,10 @@ export default {
       this.$nextTick(() => {
         this.$refs.inputedQuote.focus();
       });
+    },
+
+    updateTimer(time) {
+      this.timeElapsed = time;
     }
   },
 
@@ -121,6 +160,7 @@ export default {
   components: {
     'app-header': Header,
     'countdown': Countdown,
+    'time-tracker': TimeTracker,
   }
 }
 </script>
@@ -136,4 +176,3 @@ export default {
   padding: 0 1.5em;
 }
 </style>
-
