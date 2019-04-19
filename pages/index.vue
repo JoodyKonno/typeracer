@@ -69,11 +69,22 @@
 </template>
 
 <script>
+import io from 'socket.io-client';
 import Header from '@/components/Header';
 import Countdown from '@/components/Countdown';
 import TimeTracker from '@/components/TimeTracker';
 
 export default {
+  mounted() {
+    this.socket.on('player.joined', () => {
+      console.log('New Player has joined');
+    });
+
+    this.socket.on('game.start', () => {
+      console.log('Game can start');
+    });
+  },
+
   data() {
     return {
       inputedQuote: '',
@@ -82,6 +93,7 @@ export default {
       secondsToStart: 10,
       gameHasStarted: false,
       timeElapsed: 0.0,
+      socket: io('localhost:3001'),
     }
   },
 
