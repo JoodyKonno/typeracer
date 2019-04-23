@@ -7,6 +7,7 @@ const io = require('socket.io').listen(server);
 
 const Game = require('./Game');
 const Player = require('./Player');
+const PlayerScore = require('./PlayerScore');
 
 const game = new Game();
 io.on('connection', (socket) => {
@@ -28,6 +29,19 @@ io.on('connection', (socket) => {
 
     socket.emit('game.is.full');
   }
+
+  socket.on('player.has.finished', ({ charsPerSecond }) => {
+    game.addScore(new PlayerScore({
+      socketId: socket.id,
+      charsPerSecond,
+    }));
+
+    console.log(`Player ${socket.id} has finished the game with ${charsPerSecond} chars per second`);
+
+    if (game.isFinished()) {
+      console.log('The game has finished');
+    }
+  });
 
   socket.on('disconnect', () => {
     console.log(`Player ${socket.id} has diconnected`);

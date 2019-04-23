@@ -89,7 +89,6 @@ export default {
     return {
       inputedQuote: '',
       selectedQuote: 'They had taken it all away from him now, they had turned away from him and there was nothing for him now. He was alone and there was nothing for him.',
-
       isFinished: false,
       secondsToStart: 10,
       gameHasStarted: false,
@@ -166,6 +165,9 @@ export default {
     inputedQuote: function (newInput, oldInput) {
       if (this.remainingText === '') {
         this.isFinished = true;
+        this.socket.emit('player.has.finished', {
+          charsPerSecond: this.charsPerSecond,
+        });
       }
     }
   },
