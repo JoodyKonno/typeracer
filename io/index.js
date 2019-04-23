@@ -5,17 +5,22 @@ const server = require('http').createServer(app);
 
 const io = require('socket.io').listen(server);
 
-const game = [];
+const Game = require('./Game');
+const Player = require('./Player');
+
+const game = new Game();
 io.on('connection', (socket) => {
-  if (game.length < 2) {
-    game.push(socket.id);
+  if (!game.isFull()) {
+    game.addPlayer(new Player({
+      socketId: socket.id,
+    }));
 
     console.log(`Player ${socket.id} has joined`);
-    console.log(`This game has ${game.length} players`);
+    console.log(`This game has ${game.getPlayerCount()} players`);
 
     socket.emit('player.joined');
 
-    if (game.length === 2) {
+    if (game.isFull()) {
       socket.emit('game.can.start');
     }
   } else {
@@ -26,7 +31,9 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log(`Player ${socket.id} has diconnected`);
-    console.log(`This game has ${game.length} players`);
+
+    game.removePlayer(socket.id);
+    console.log(`This game has ${game.getPlayerCount()} players`);
   });
 });
 
