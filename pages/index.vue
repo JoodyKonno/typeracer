@@ -165,6 +165,9 @@ export default {
     inputedQuote: function (newInput, oldInput) {
       if (this.remainingText === '') {
         this.isFinished = true;
+        this.socket.emit('player.has.finished', {
+          charsPerSecond: this.charsPerSecond,
+        });
       }
     }
   },
